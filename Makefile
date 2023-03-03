@@ -34,6 +34,7 @@ FTC_RM=@rm
 FTC_MKDIR=@mkdir
 FTC_CP=@cp
 FTC_MV=@mv
+FTC_BASH=@bash
 else
 FTC_CC=$(CC)
 FTC_LD=$(LD)
@@ -42,13 +43,16 @@ FTC_RM=rm
 FTC_MKDIR=mkdir
 FTC_CP=cp
 FTC_MV=mv
+FTC_BASH=bash
 endif
+
+LIB=lib/libmthpc.so
 
 %.o: %.c
 	$(FTC_CC) $(CFLAGS) $(INC_PARAMS) -c $< -o $@
 
 $(BIN): $(OBJ)
-	$(FTC_CC) $(CFLAGS) $< -o $@
+	$(FTC_CC) $(CFLAGS) $(INC_PARAMS) $< $(LIB) -o $@
 
 build: $(BIN)
 	$(FTC_RM) -rf $(BUILD_DIR)
