@@ -20,6 +20,7 @@ CFLAGS+=$(DEBUG_FLAGS)
 endif
 
 SRC:=src/init.c
+SRC+=src/transfer.c
 
 OBJ:=$(SRC:.c=.o)
 
@@ -52,7 +53,7 @@ LIB=lib/libmthpc.so
 	$(FTC_CC) $(CFLAGS) $(INC_PARAMS) -c $< -o $@
 
 $(BIN): $(OBJ)
-	$(FTC_CC) $(CFLAGS) $(INC_PARAMS) $< $(LIB) -o $@
+	$(FTC_CC) $(CFLAGS) $(INC_PARAMS) $(OBJ) $(LIB) -o $@
 
 build: $(BIN)
 	$(FTC_RM) -rf $(BUILD_DIR)

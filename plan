@@ -1,3 +1,5 @@
+The manual dynamic libraries are ones where you explicitly load the library from your code, with calls such as dlopen (to open a library) and dlsym (to get the address of a symbol within that library).
+
 init ---create thread---> threads ---------------- monitor
                             |
                           worker
