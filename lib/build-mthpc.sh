@@ -10,4 +10,4 @@ make -C $MTHPC_DIR build
 mv $MTHPC_DIR/mthpc/include/mthpc ../include/
 mv $MTHPC_DIR/mthpc/libmthpc.so .
 make -C $MTHPC_DIR cleanall
-echo $MTHPC_DIR > current_mthpc_version
+echo "$MTHPC_DIR-$(uname)-$(uname -m)" > current_mthpc_version

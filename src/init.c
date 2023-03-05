@@ -7,7 +7,6 @@
 #define pr_log_fmt "init"
 
 struct transfer transfer = {
-    .input = "set_ftc_source_code",
     .compiler = "gcc",
     .cflags = "-Wall -O2",
 };
@@ -57,6 +56,9 @@ int main(int argc, char *argv[])
     set_option(argc, argv);
     pr_log("Transfer iniitization\n");
     dump_transfer();
+    setup_files();
+    wait_file_event(&transfer.event_set_source_code);
+    unset_files();
 
     return 0;
 }

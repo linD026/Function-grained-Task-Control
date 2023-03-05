@@ -11,3 +11,9 @@ The dynamic library method is a little bit faster. Here is the numbers:
 dl: 0.031179 seconds
 Fork: 0.036710 seconds
 ```
+
+## For MacOS
+
+```
+DYLD_LIBRARY_PATH=./lib ./ftc
+```

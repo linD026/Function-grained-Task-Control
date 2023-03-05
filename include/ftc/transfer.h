@@ -1,8 +1,6 @@
 #ifndef __TRANSFER_H__
 #define __TRANSFER_H__
 
-#include <stdio.h>
-
 #ifndef FILENAME_SIZE
 #define FILENAME_SIZE 80
 #endif
@@ -11,17 +9,54 @@
 #define BUFFFER_SIZE 80
 #endif
 
+#if __linux__
+#include <sys/epoll.h>
+#include <sys/inotify.h>
+
+#ifndef NR_EPOLL_EVENT
+/*
+ * Use case:
+ * index 0: set_ftc_source_code
+ */
+#define NR_EPOLL_EVENT 4
+#endif
+
+struct file_event {
+    char name[FILENAME_SIZE];
+    int fd;
+    struct transfer_epoll {
+        int fd;
+        struct epoll_event event;
+        struct epoll_event events[NR_EPOLL_EVENT];
+    } epoll;
+    struct transfer_inotify {
+        int fd;
+        int watch_point;
+    } inotify;
+    void (*event_handler)(struct file_event *);
+    void *arg;
+};
+
+#else
+#include <assert.h>
+static_assert(
+    0, "Unsupport inotify "
+       "TODO: For BSD, use kqueue - kernel event notification mechanism");
+#endif
+
 struct transfer {
-    char input[FILENAME_SIZE];
-    FILE *fp;
     char compiler[FILENAME_SIZE];
     char cflags[BUFFFER_SIZE];
-    // epoll notify someone write the runtime lib to the fp.
+    struct file_event event_set_source_code;
 };
 
 /* define at src/init.c */
 extern struct transfer transfer;
 
 void dump_transfer(void);
+
+int setup_files(void);
+void unset_files(void);
+void wait_file_event(struct file_event *fe);
 
 #endif /* __TRANSFER_H__ */
