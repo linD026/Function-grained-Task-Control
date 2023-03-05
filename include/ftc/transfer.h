@@ -7,10 +7,15 @@
 #define FILENAME_SIZE 80
 #endif
 
+#ifndef BUFFER_SIZE
+#define BUFFFER_SIZE 80
+#endif
+
 struct transfer {
     char input[FILENAME_SIZE];
     FILE *fp;
     char compiler[FILENAME_SIZE];
+    char cflags[BUFFFER_SIZE];
     // epoll notify someone write the runtime lib to the fp.
 };
 

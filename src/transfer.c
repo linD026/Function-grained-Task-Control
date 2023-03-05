@@ -10,6 +10,13 @@ void dump_transfer(void)
 {
     pr_log("input file: %s\n", transfer.input);
     pr_log("compiler: %s\n", transfer.compiler);
+    pr_log("cflags: %s\n", transfer.cflags);
+}
+
+int set_files(void)
+{
+    // fopen();
+    // ...
 }
 
 static struct task_struct *get_user_program(void)
