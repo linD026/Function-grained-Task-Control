@@ -21,6 +21,7 @@ endif
 
 SRC:=src/init.c
 SRC+=src/transfer.c
+SRC+=src/worker.c
 
 OBJ:=$(SRC:.c=.o)
 

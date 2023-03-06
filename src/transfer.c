@@ -8,6 +8,7 @@
 #include <unistd.h> // for close()
 #include <errno.h>
 #include <string.h> // for strerror
+#include <stdio.h> // for sprintf
 
 #undef pr_log_fmt
 #define pr_log_fmt "transfer"
@@ -109,21 +110,40 @@ static struct task_struct *get_user_program(void)
     return task;
 }
 
+static void build_dynamic_library(struct task_struct *task, const char *buffer,
+                                  ssize_t size)
+{
+#define CMD_LINE_SIZE FILENAME_SIZE + FILENAME_SIZE + FILENAME_SIZE
+    char cmd_line[CMD_LINE_SIZE] = { 0 };
+
+    sprintf(task->name, "%s.so", buffer);
+
+    sprintf(cmd_line, "%s -o %s %s %s -shared", transfer.compiler, task->name,
+            buffer, transfer.cflags);
+
+    cmd_line[CMD_LINE_SIZE - 1] = '\0';
+    pr_log("Build: %s\n", task->name);
+    system(cmd_line);
+}
+
 static void event_set_source_code_handler(struct file_event *fe)
 {
     ssize_t ret;
     char buffer[BUFFFER_SIZE] = { 0 };
+    struct task_struct *task;
 
     pr_log("file event: set_source_code\n");
     ret = read(fe->fd, buffer, BUFFFER_SIZE);
     BUG_ON(ret == -1 && errno != EAGAIN, "read");
 
-    buffer[BUFFFER_SIZE - 1] = '\0';
-    pr_log("Read %s: %s", fe->name, buffer);
+    buffer[min(ret, BUFFFER_SIZE) - 1] = '\0';
+    pr_log("Read %s: %s\n", fe->name, buffer);
     lseek(fe->fd, 0, SEEK_SET);
-    /* TODO: create task */
-    // TODO: Build the task
-    // TODO: Add the task to the workqueue
+
+    task = get_user_program();
+    build_dynamic_library(task, buffer, ret);
+    execute_task(task);
+    free(task);
 }
 
 int setup_files(void)
