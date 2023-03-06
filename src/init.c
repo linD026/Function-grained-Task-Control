@@ -2,6 +2,7 @@
 #include <ftc/debug.h>
 #include <getopt.h>
 #include <string.h>
+#include <signal.h>
 
 #undef pr_log_fmt
 #define pr_log_fmt "init"
@@ -51,12 +52,37 @@ static void set_option(int argc, char *argv[])
     }
 }
 
+static struct sigaction sa;
+
+static void cleanup_handler(int sig, siginfo_t *si, void *unused)
+{
+#undef pr_log_fmt
+#define pr_log_fmt "signal"
+
+    pr_log("Exiting the program...\n");
+    pr_log("Cleanup the settings...\n");
+    unset_files();
+    exit(EXIT_SUCCESS);
+
+#undef pr_log_fmt
+#define pr_log_fmt "init"
+}
+
+static void setup_signal(void)
+{
+    sa.sa_flags = SA_SIGINFO;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = cleanup_handler;
+    BUG_ON(sigaction(SIGINT, &sa, NULL) == -1, "singal handler");
+}
+
 int main(int argc, char *argv[])
 {
     set_option(argc, argv);
     pr_log("Transfer iniitization\n");
     dump_transfer();
     setup_files();
+    setup_signal();
     wait_file_event(&transfer.event_set_source_code);
     unset_files();
 
