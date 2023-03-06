@@ -26,7 +26,8 @@ static int setup_file_event(struct file_event *fe, const char *name,
     BUG_ON(!fe || !name || !event_handler, "NULL ptr");
 
     strncpy(fe->name, name, min(strlen(name), FILENAME_SIZE));
-    fe->fd = open(fe->name, O_CREAT, O_RDWR);
+    fe->fd = open(fe->name, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    lseek(fe->fd, 0, SEEK_SET);
 
     fe->inotify.fd = inotify_init1(IN_NONBLOCK);
     fe->inotify.watch_point =
@@ -110,10 +111,13 @@ static struct task_struct *get_user_program(void)
 
 static void event_set_source_code_handler(struct file_event *fe)
 {
+    ssize_t ret;
     char buffer[BUFFFER_SIZE] = { 0 };
 
     pr_log("file event: set_source_code\n");
-    read(fe->fd, buffer, BUFFFER_SIZE);
+    ret = read(fe->fd, buffer, BUFFFER_SIZE);
+    BUG_ON(ret == -1 && errno != EAGAIN, "read");
+
     buffer[BUFFFER_SIZE - 1] = '\0';
     pr_log("Read %s: %s", fe->name, buffer);
     lseek(fe->fd, 0, SEEK_SET);
