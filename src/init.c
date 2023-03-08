@@ -73,7 +73,7 @@ static void setup_signal(void)
     sa.sa_flags = SA_SIGINFO;
     sigemptyset(&sa.sa_mask);
     sa.sa_sigaction = cleanup_handler;
-    BUG_ON(sigaction(SIGINT, &sa, NULL) == -1, "singal handler");
+    BUG_ON(sigaction(SIGINT, &sa, NULL) == -1, "signal handler");
 }
 
 int main(int argc, char *argv[])
