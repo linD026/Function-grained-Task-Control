@@ -30,6 +30,17 @@ Finally, it will create the file, `set_ftc_source_code`. You can pass the **abso
 echo "/path/to/src_code" > set_ftc_source_code
 ```
 
+### Function task
+
+Right now, ftc will only execute the function with `test` name.
+So, if you want to execute the function codes by ftc, the enter point would be like:
+
+```cpp
+void test(void) {
+    // Do what you want...
+}
+```
+
 ## Log message
 
 At server side, ftc also provide the log message, here is the example:
