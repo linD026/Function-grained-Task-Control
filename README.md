@@ -30,6 +30,23 @@ Finally, it will create the file, `set_ftc_source_code`. You can pass the **abso
 echo "/path/to/src_code" > set_ftc_source_code
 ```
 
+## Log message
+
+At server side, ftc also provide the log message, here is the example:
+
+```
+[1678294046.320238] init: Transfer iniitization
+[1678294046.320358] transfer: input file: 
+[1678294046.320366] transfer: compiler: gcc
+[1678294046.320372] transfer: cflags: -Wall -O2
+[1678294077.086624] transfer: file event: set_source_code
+[1678294077.086688] transfer: Read set_ftc_source_code: /path/to/src/user.c
+[1678294077.086704] transfer: Build: /path/to/src/user.c.so
+/path/to/src/user.c.so executed 48.000000 ns
+^C[1678294079.851142] signal: Exiting the program...
+[1678294079.851173] signal: Cleanup the settings...
+```
+
 ## Benchmark
 
 Comparing two methods, dynamic library and creating new process, to run the new function task.
