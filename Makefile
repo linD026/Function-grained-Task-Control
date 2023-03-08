@@ -56,13 +56,6 @@ LIB=lib/libmthpc.so
 $(BIN): $(OBJ)
 	$(FTC_CC) $(CFLAGS) $(INC_PARAMS) $(OBJ) $(LIB) -o $@
 
-build: $(BIN)
-	$(FTC_RM) -rf $(BUILD_DIR)
-	$(FTC_MKDIR) $(BUILD_DIR)
-	$(FTC_MKDIR) $(BUILD_DIR)/include
-	$(FTC_CP) -r include/FTC $(BUILD_DIR)/include/.
-	$(FTC_MV) $(BIN) $(BUILD_DIR)/.
-
 clean:
 	$(FTC_RM) -f src/*.o
 	$(FTC_RM) -f $(BIN)
