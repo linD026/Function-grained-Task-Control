@@ -22,7 +22,7 @@ Then execute the binary program, `ftc`, with following paramters.
 - `CC`:
 	- The compiler to compile the function-graned task.
 - `CFLAGS`:
-	- The flags pass to the `CC` compiler.
+	- The flags passed to the `CC` compiler.
 
 Finally, it will create the file, `set_ftc_source_code`. You can pass the **absolute path** of the source code you want to execute. For example:
 
@@ -33,7 +33,7 @@ echo "/path/to/src_code" > set_ftc_source_code
 ### Function task
 
 To use the FTC API, include the header `include/uapi/ftc.h`.
-For client side, the enter point is `FTC_ENTER_POINT(void)` function.
+For client side, the enter point is `FTC_ENTER_POINT(name)` function.
 The function protoype type of the enter point is `void name (void)`.
 So if you want to execute the function codes by ftc, the enter point would be like:
 
