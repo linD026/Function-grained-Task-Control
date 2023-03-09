@@ -1,6 +1,7 @@
 #include <ftc/task.h>
 #include <ftc/print.h>
 #include <ftc/debug.h>
+#include <mthpc/workqueue.h>
 #include <sys/time.h>
 #include <dlfcn.h>
 #include <stdio.h>
@@ -13,8 +14,9 @@
          (1000000000 + end.tv_nsec - start.tv_nsec) : \
          (end.tv_nsec - start.tv_nsec))
 
-int execute_task(struct task_struct *task)
+void execute_task(struct mthpc_work *work)
 {
+    struct task_struct *task = container_of(work, struct task_struct, work);
     struct timespec start, end;
     double duration;
     void *dl = NULL;
@@ -28,12 +30,12 @@ int execute_task(struct task_struct *task)
     dl = dlopen(task->name, RTLD_LAZY);
     if (!dl) {
         WARN_ON(1, "%s: %s", task->name, dlerror());
-        return -1;
+        goto free_task;
     }
     handle = (void (*)(void))dlsym(dl, task_enter_point);
     if (error) {
         WARN_ON(1, "dlsym(%s):%s", task_enter_point, error);
-        return -1;
+        goto free_task;
     }
     clock_gettime(CLOCK_MONOTONIC, &start);
     handle();
@@ -42,5 +44,6 @@ int execute_task(struct task_struct *task)
     duration = time_diff(start, end);
     pr_log("%s (%lu) executed %.6f ns\n", task->name, task->id, duration);
 
-    return 0;
+free_task:
+    free(task);
 }

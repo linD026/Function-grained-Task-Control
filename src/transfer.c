@@ -1,6 +1,7 @@
 #include <ftc/transfer.h>
 #include <ftc/task.h>
 #include <ftc/debug.h>
+#include <mthpc/workqueue.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -151,7 +152,10 @@ static void event_set_source_code_handler(struct file_event *fe)
     task = get_user_program();
     if (unlikely(build_dynamic_library(task, buffer)))
         goto free_task;
-    execute_task(task);
+    MTHPC_INIT_WORK(&task->work, "task_struct->work", execute_task, NULL);
+    mthpc_queue_work(&task->work);
+
+    return;
 
 free_task:
     free(task);

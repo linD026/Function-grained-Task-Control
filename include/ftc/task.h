@@ -13,6 +13,6 @@ struct task_struct {
     struct mthpc_work work;
 };
 
-int execute_task(struct task_struct *task);
+void execute_task(struct mthpc_work *work);
 
 #endif /* __FTC_TASK_H__ */
