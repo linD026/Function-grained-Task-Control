@@ -49,7 +49,6 @@ static int setup_file_event(struct file_event *fe, const char *name,
     return 0;
 }
 
-// TODO: Add singal handler
 static void unset_file_event(struct file_event *fe)
 {
     close(fe->fd);
@@ -115,7 +114,9 @@ static struct task_struct *get_user_program(void)
 static int build_dynamic_library(struct task_struct *task, const char *buffer,
                                  ssize_t size)
 {
-#define CMD_LINE_SIZE FILENAME_SIZE + FILENAME_SIZE + FILENAME_SIZE
+#define CMD_LINE_SIZE                                               \
+    sizeof(transfer.compiler) + sizeof(task->name) + BUFFFER_SIZE + \
+        sizeof(transfer.cflags) + FILENAME_SIZE
     char cmd_line[CMD_LINE_SIZE] = { 0 };
     int ret;
 

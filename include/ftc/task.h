@@ -6,7 +6,7 @@
 #endif
 
 struct task_struct {
-    char name[FILENAME_SIZE];
+    char name[FILENAME_SIZE + FILENAME_SIZE];
     unsigned long id;
 };
 
