@@ -111,8 +111,7 @@ static struct task_struct *get_user_program(void)
     return task;
 }
 
-static int build_dynamic_library(struct task_struct *task, const char *buffer,
-                                 ssize_t size)
+static int build_dynamic_library(struct task_struct *task, const char *buffer)
 {
 #define CMD_LINE_SIZE                                               \
     sizeof(transfer.compiler) + sizeof(task->name) + BUFFFER_SIZE + \
@@ -150,7 +149,7 @@ static void event_set_source_code_handler(struct file_event *fe)
     lseek(fe->fd, 0, SEEK_SET);
 
     task = get_user_program();
-    if (unlikely(build_dynamic_library(task, buffer, ret)))
+    if (unlikely(build_dynamic_library(task, buffer)))
         goto free_task;
     execute_task(task);
 
