@@ -66,12 +66,12 @@ At server side, ftc also provide the log message, here is the example:
 
 Comparing two methods, dynamic library and creating new process, to run the new function task.
 The dynamic library method is a little bit faster. Here is the numbers:
-> The programs are located at `tests/benchmark`. Run `make` to get the number.
+> The programs are located at `tests/dl-fork-benchmark`. Run `make` to get the number.
 
 ```
-# log-dl-fork-2023-03-05
-dl: 0.031179 seconds
-Fork: 0.036710 seconds
+# log-dl-fork-2023-03-09
+dl: 0.031857 seconds
+Fork: 0.034142 seconds
 ```
 
 ## For MacOS (NOT SUPPORT YET)

@@ -7,6 +7,12 @@
 #define USEC 1000000
 #define N_LOOP 1000
 
+#ifndef CURR_DIR
+#define CURR_DIR ""
+#endif
+
+#define FILE_CURRENT_PATH(name) CURR_DIR "/" name
+
 int main(void)
 {
     struct timeval start, end;
@@ -18,7 +24,7 @@ int main(void)
     for (int i = 0; i < N_LOOP; i++) {
         system("gcc -o libuser.so user.c -Wall -O2 -shared");
         dl = dlopen(
-            "/home/slda/github/function-task-control/tests/benchmark/libuser.so",
+            FILE_CURRENT_PATH("libuser.so"),
             RTLD_LAZY);
         handle = (void (*)(void))dlsym(dl, "test");
         handle();
