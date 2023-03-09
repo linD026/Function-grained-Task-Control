@@ -1,3 +1,4 @@
+#include <ftc/version.h>
 #include <ftc/transfer.h>
 #include <ftc/debug.h>
 #include <getopt.h>
@@ -80,6 +81,7 @@ static void setup_signal(void)
 int main(int argc, char *argv[])
 {
     set_option(argc, argv);
+    pr_log("ftc version: %s\n", current_version());
     pr_log("Transfer iniitization\n");
     dump_transfer();
     setup_files();
