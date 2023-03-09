@@ -10,6 +10,7 @@
 struct transfer transfer = {
     .compiler = "gcc",
     .cflags = "-Wall -O2",
+    .task_count = 0,
 };
 
 #define OPT_COMPILER 0

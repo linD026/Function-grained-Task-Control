@@ -32,11 +32,15 @@ echo "/path/to/src_code" > set_ftc_source_code
 
 ### Function task
 
-Right now, ftc will only execute the function with `test` name.
-So, if you want to execute the function codes by ftc, the enter point would be like:
+To use the FTC API, include the header `include/uapi/ftc.h`.
+For client side, the enter point is `FTC_ENTER_POINT(void)` function.
+The function protoype type of the enter point is `void name (void)`.
+So if you want to execute the function codes by ftc, the enter point would be like:
 
 ```cpp
-void test(void) {
+#include "include/uapi/ftc.h"
+
+FTC_ENTER_POINT(name) {
     // Do what you want...
 }
 ```

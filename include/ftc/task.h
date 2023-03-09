@@ -7,6 +7,7 @@
 
 struct task_struct {
     char name[FILENAME_SIZE];
+    unsigned long id;
 };
 
 int execute_task(struct task_struct *task);

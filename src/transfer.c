@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <dlfcn.h>
+#include <stdatomic.h>
 #include <unistd.h> // for close()
 #include <errno.h>
 #include <string.h> // for strerror
@@ -107,23 +107,31 @@ static struct task_struct *get_user_program(void)
         return NULL;
     }
 
+    task->id = atomic_fetch_add(&transfer.task_count, 1);
+
     return task;
 }
 
-static void build_dynamic_library(struct task_struct *task, const char *buffer,
-                                  ssize_t size)
+static int build_dynamic_library(struct task_struct *task, const char *buffer,
+                                 ssize_t size)
 {
 #define CMD_LINE_SIZE FILENAME_SIZE + FILENAME_SIZE + FILENAME_SIZE
     char cmd_line[CMD_LINE_SIZE] = { 0 };
+    int ret;
 
     sprintf(task->name, "%s.so", buffer);
 
-    sprintf(cmd_line, "%s -o %s %s %s -shared", transfer.compiler, task->name,
-            buffer, transfer.cflags);
+    sprintf(cmd_line, "%s -o %s %s %s -D'CONFIG_TASK_ID=%lu' -shared",
+            transfer.compiler, task->name, buffer, transfer.cflags, task->id);
 
     cmd_line[CMD_LINE_SIZE - 1] = '\0';
-    pr_log("Build: %s\n", task->name);
-    system(cmd_line);
+    pr_log("Build: %s(%lu)\n", task->name, task->id);
+    /* Return 0, if the command succeed. */
+    ret = system(cmd_line);
+    WARN_ON(ret == -1, "system(\"%s\") return %d error:%s", cmd_line, ret,
+            strerror(errno));
+
+    return ret;
 }
 
 static void event_set_source_code_handler(struct file_event *fe)
@@ -141,8 +149,11 @@ static void event_set_source_code_handler(struct file_event *fe)
     lseek(fe->fd, 0, SEEK_SET);
 
     task = get_user_program();
-    build_dynamic_library(task, buffer, ret);
+    if (unlikely(build_dynamic_library(task, buffer, ret)))
+        goto free_task;
     execute_task(task);
+
+free_task:
     free(task);
 }
 

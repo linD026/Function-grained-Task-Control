@@ -44,10 +44,13 @@ static_assert(
        "TODO: For BSD, use kqueue - kernel event notification mechanism");
 #endif
 
+#include <stdatomic.h>
+
 struct transfer {
     char compiler[FILENAME_SIZE];
     char cflags[BUFFFER_SIZE];
     struct file_event event_set_source_code;
+    atomic_ulong task_count;
 };
 
 /* define at src/init.c */
