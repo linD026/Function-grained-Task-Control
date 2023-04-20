@@ -50,7 +50,7 @@ static void set_option(int argc, char *argv[])
             transfer.compiler[FILENAME_SIZE - 1] = '\0';
             break;
         case OPT_CFLAGS:
-            if (set_cflags) {
+            if (!set_cflags) {
                 set_cflags = 1;
                 transfer.nr_cflags = 0;
             }

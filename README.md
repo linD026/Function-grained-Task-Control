@@ -24,6 +24,12 @@ Then execute the binary program, `ftc`, with following paramters.
 - `CFLAGS`:
 	- The flags passed to the `CC` compiler.
 
+For example:
+
+```bash
+ ./ftc --CC=$(which gcc) --CFLAGS=-Wall --CFLAGS=-O2
+```
+
 Finally, it will create the file, `set_ftc_source_code`. You can pass the **absolute path** of the source code you want to execute. For example:
 
 ```bash
