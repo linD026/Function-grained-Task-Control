@@ -80,10 +80,10 @@ Fork: 0.034142 seconds
 
 Comparing two methods, `system` and `posix_spawn`, to compile the program.
 To simulate the real workload, we allocate and populate 10 pages before
-execute these two methods.
+executing these two methods.
 
 ```
-#log-posix_spawn-system-2023-04-20
+# log-posix_spawn-system-2023-04-20
 system: 0.041055 seconds
 posix_spawn: 0.039424 seconds
 ```
