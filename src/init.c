@@ -1,5 +1,6 @@
 #include <ftc/version.h>
 #include <ftc/transfer.h>
+#include <ftc/lightweight_system.h>
 #include <ftc/debug.h>
 #include <getopt.h>
 #include <string.h>
@@ -56,6 +57,7 @@ static void set_option(int argc, char *argv[])
             }
             strncpy(transfer.cflags[transfer.nr_cflags], optarg, BUFFFER_SIZE);
             transfer.cflags[transfer.nr_cflags++][BUFFFER_SIZE - 1] = '\0';
+            BUG_ON(transfer.nr_cflags >= CFLAGS_MAX_SIZE, "overflow");
             break;
         default:
             BUG_ON(1, "unkown option: %d", opt);
@@ -86,8 +88,6 @@ static void setup_signal(void)
     sa.sa_sigaction = cleanup_handler;
     BUG_ON(sigaction(SIGINT, &sa, NULL) == -1, "signal handler");
 }
-
-#include <ftc/lightweight_system.h>
 
 int main(int argc, char *argv[])
 {
