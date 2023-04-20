@@ -1,6 +1,7 @@
 #include <ftc/transfer.h>
 #include <ftc/task.h>
 #include <ftc/debug.h>
+#include <ftc/lightweight_system.h>
 #include <mthpc/workqueue.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -16,10 +17,17 @@
 
 void dump_transfer(void)
 {
+    int i = 0;
+
     // TODO: dump_file_event
     pr_log("input file: %s\n", transfer.event_set_source_code.name);
     pr_log("compiler: %s\n", transfer.compiler);
-    pr_log("cflags: %s\n", transfer.cflags);
+    pr_log("cflags:");
+    i = 0;
+    for (char *iter = transfer.cflags[i]; i < transfer.nr_cflags;
+         iter = transfer.cflags[++i])
+        print(" %s", iter);
+    print("\n");
 }
 
 static int setup_file_event(struct file_event *fe, const char *name,
@@ -112,25 +120,38 @@ static struct task_struct *get_user_program(void)
     return task;
 }
 
-static int build_dynamic_library(struct task_struct *task, const char *buffer)
+static int build_dynamic_library(struct task_struct *task, char *buffer)
 {
-#define CMD_LINE_SIZE                                               \
-    sizeof(transfer.compiler) + sizeof(task->name) + BUFFFER_SIZE + \
-        sizeof(transfer.cflags) + FILENAME_SIZE
-    char cmd_line[CMD_LINE_SIZE] = { 0 };
-    int ret;
+    char id[BUFFFER_SIZE] = { 0 };
+    char *argv[BUFFFER_SIZE] = { 0 };
+    int i = 0, argc = 0, ret = 0;
 
     sprintf(task->name, "%s.so", buffer);
 
-    sprintf(cmd_line, "%s -o %s %s %s -D'CONFIG_TASK_ID=%lu' -shared",
-            transfer.compiler, task->name, buffer, transfer.cflags, task->id);
+    sprintf(id, "-DCONFIG_TASK_ID=%lu", task->id);
+    id[BUFFFER_SIZE - 1] = '\0';
 
-    cmd_line[CMD_LINE_SIZE - 1] = '\0';
     pr_log("Build: %s(%lu)\n", task->name, task->id);
+
+    argv[argc++] = transfer.compiler;
+    argv[argc++] = "-o";
+    argv[argc++] = task->name;
+    argv[argc++] = buffer;
+
+    for (char *iter = transfer.cflags[i]; i < transfer.nr_cflags;
+         iter = transfer.cflags[++i])
+        argv[argc++] = iter;
+
+    argv[argc++] = id;
+    argv[argc++] = "-shared";
+    argv[argc++] = NULL;
+
+    WARN_ON(argc >= BUFFFER_SIZE, "overflow");
+
     /* Return 0, if the command succeed. */
-    ret = system(cmd_line);
-    WARN_ON(ret == -1, "system(\"%s\") return %d error:%s", cmd_line, ret,
-            strerror(errno));
+    ret = compile(transfer.compiler, argv);
+    WARN_ON(ret, "compile(\"%s\") return %d error:%s", task->name, ret,
+            strerror(ret));
 
     return ret;
 }

@@ -46,9 +46,14 @@ static_assert(
 
 #include <stdatomic.h>
 
+#define CFLAGS_MAX_SIZE 16
+
 struct transfer {
     char compiler[FILENAME_SIZE];
-    char cflags[BUFFFER_SIZE];
+    struct {
+        unsigned int nr_cflags;
+        char cflags[CFLAGS_MAX_SIZE][BUFFFER_SIZE];
+    };
     struct file_event event_set_source_code;
     atomic_ulong task_count;
 };

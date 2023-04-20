@@ -10,7 +10,11 @@
 
 struct transfer transfer = {
     .compiler = "gcc",
-    .cflags = "-Wall -O2",
+    .cflags = { 
+        { "-Wall" },
+        { "-O2" },
+    },
+    .nr_cflags = 2,
     .task_count = 0,
 };
 
@@ -36,6 +40,7 @@ static void set_option(int argc, char *argv[])
 {
     int opt;
     int opt_index;
+    int set_cflags = 0;
 
     while ((opt = getopt_long(argc, argv, OPT_STRING, opt_data.options,
                               &opt_index)) != -1) {
@@ -45,8 +50,12 @@ static void set_option(int argc, char *argv[])
             transfer.compiler[FILENAME_SIZE - 1] = '\0';
             break;
         case OPT_CFLAGS:
-            strncpy(transfer.cflags, optarg, BUFFFER_SIZE);
-            transfer.cflags[BUFFFER_SIZE - 1] = '\0';
+            if (set_cflags) {
+                set_cflags = 1;
+                transfer.nr_cflags = 0;
+            }
+            strncpy(transfer.cflags[transfer.nr_cflags], optarg, BUFFFER_SIZE);
+            transfer.cflags[transfer.nr_cflags++][BUFFFER_SIZE - 1] = '\0';
             break;
         default:
             BUG_ON(1, "unkown option: %d", opt);
@@ -78,11 +87,14 @@ static void setup_signal(void)
     BUG_ON(sigaction(SIGINT, &sa, NULL) == -1, "signal handler");
 }
 
+#include <ftc/lightweight_system.h>
+
 int main(int argc, char *argv[])
 {
     set_option(argc, argv);
     pr_log("ftc version: %s\n", current_version());
     pr_log("Transfer iniitization\n");
+
     dump_transfer();
     setup_files();
     setup_signal();
