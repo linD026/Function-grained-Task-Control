@@ -64,6 +64,8 @@ At server side, ftc also provide the log message, here is the example:
 
 ## Benchmark
 
+### Dynamic library and `fork`
+
 Comparing two methods, dynamic library and creating new process, to run the new function task.
 The dynamic library method is a little bit faster. Here is the numbers:
 > The programs are located at `tests/dl-fork-benchmark`. Run `make` to get the number.
@@ -72,6 +74,18 @@ The dynamic library method is a little bit faster. Here is the numbers:
 # log-dl-fork-2023-03-09
 dl: 0.031857 seconds
 Fork: 0.034142 seconds
+```
+
+### `posix_spawn` and `system`
+
+Comparing two methods, `system` and `posix_spawn`, to compile the program.
+To simulate the real workload, we allocate and populate 10 pages before
+execute these two methods.
+
+```
+#log-posix_spawn-system-2023-04-20
+system: 0.041055 seconds
+posix_spawn: 0.039424 seconds
 ```
 
 ## For MacOS (NOT SUPPORT YET)
