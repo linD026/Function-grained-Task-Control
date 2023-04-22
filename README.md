@@ -83,6 +83,7 @@ Fork: 0.034142 seconds
 ```
 
 ### `posix_spawn` and `system`
+> For glibc, [`system`](https://elixir.bootlin.com/glibc/latest/source/sysdeps/posix/system.c#L101) already used the `posix_spawn`.
 
 Comparing two methods, `system` and `posix_spawn`, to compile the program.
 To simulate the real workload, we allocate and populate 10 pages before
